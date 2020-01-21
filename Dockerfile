@@ -17,7 +17,9 @@ RUN apt-get update && apt-get clean && apt-get install -y \
     nodejs
 
 ARG CACHEBUST=1
-RUN npm install -g lighthouse
+RUN npm install -g lighthouse \
+    && pip install --upgrade pip \
+    && pip install flask waitress
 
 RUN useradd apps \
     && mkdir -p /home/apps \
@@ -26,3 +28,10 @@ RUN useradd apps \
 COPY bootstrap.sh /
 
 CMD '/bootstrap.sh'
+
+WORKDIR /python-listener-scripts
+
+COPY listener.py listener.py
+COPY SPA_Config.json SPA_Config.json
+
+#ENTRYPOINT ["python", "listener.py"]
